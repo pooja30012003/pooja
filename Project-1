@@ -1,0 +1,149 @@
+                                                    ENABLING ALTERNATIVE ACCESSIBLE STRATEGIES FOR PERSON WITH SPEECH IMPAIRMENT
+
+
+1.ABSTRACT :
+
+Human beings interact with each other to convey their ideas, thoughts, and experiences to the people around them. But this is not the case for deaf-mute people.Sign language paves the 
+way for deaf-mute people to communicate.Through sign language, communication is possible for a deaf-mute person without the means of acoustic sounds. The aim behind this work is to 
+develop a system for recognizing the sign language, which provides communication between people with speech impairment and normal people, thereby reducing the communication gap between 
+them. 
+Compared to other gestures (arm, face,head and body), hand gesture plays an important role, as it expresses the user's views inless time. In the current work flex sensor-based gesture 
+recognition module is developed to recognize English alphabets and few words. The basic system consists of a two parts; sign language recognition and conversion to text and further to 
+speech.The sign language glove consist of a simple hand gloves fitted with flex sensors which is being used for the monitoring the amount of bend on the fingers. Flex means bend, this is 
+the sensors that change the resistance depending on the amount of bend on the sensor. Data from the sensors is send to the Control unit which is the Arduino Nano the analog signals from 
+the sensors are digitally converted and compared with the stored value for the recognition of sign and then displayed as a text on the 16x2 LCD.
+
+2.INTRODUCTION :
+
+Deaf-mute people need to communicate with normal people for their daily routine. The deaf-mute people throughout the world use sign language to communicate with other people. However, 
+it is possible only for those who have undergone special training to understand the language. Sign language uses hand gestures and other means of non-verbal behaviors to convey 
+their intended meaning. It involves combining hand shapes, orientation and hand movements, arms or body movement, and facial expressions simultaneously, to fluidly express speaker's 
+thoughts. The idea is to create a sign language to speech conversion system, using which the information gestured by a deaf-mute person can be effectively conveyed to a normal person. 
+The main aim of this work is to design and implement a system to translate finger spelling (sign) to speech, using recognition and synthesis techniques.
+
+Sign language is a natural way of communication between normal and dumb people. Sign language is mostly dependent on hand gesture recognition. It is sometimes not easy for normal people 
+to recognize the signs properly and understand what they want to say.The flex sensors are used in the system which is attached onto the board which convert the gesture into resistance 
+which is further converted to the text through Arduino nano. There is no such commercial system available in the market to convert sign language into speech. However research is being 
+made to convert sign to speech and make it portable, efficient and highly accurate. The important research problem in computer recognition is the sign language for enabling communication 
+with hearing impaired people. This system introduces efficient and fast techniques for identification of the hand gesture representing an alphabet of the Sign Language.Currently,more 
+interest is created to do research in the field of sign language recognition system.
+
+3.COMPONENTS REQUIRED :
+➢ Flex Sensor
+➢ LCD
+➢ Aurduino
+➢ LED
+➢ Potentiometer
+➢ Jumping wires
+➢ Aurduino IDE
+
+3.1.FLEX SENSOR :
+Flex sensor means flexible sensors, flexible sensor are sensors which change their resistance depending upon the bend on the sensor. The more the bend the resistance is also more.
+Flex sensor also work as variable analog voltage divider. Flex sensor consists of carbon resistive element within a thin flexible substrate. When the substrate is bent the resistive 
+element produces a resistive output relative to the bend radius. The system consists of flex sensors which are stitched on the fingers because the main part of the gestures are fingers 
+so for each finger a separate sensor is required. The hand gesture is inputted to the system via flex sensors the bent of each finger describes as shown in American Sign Language. 
+As the fingers bends the sensors also starts bending and as the sensors bends the resistances also changes accordingly and that resistance value is inputted to the Arduino.
+
+3.2.LIQUID CRYSTAL DISPLAY :
+A 16x2 LCD (Liquid Crystal Display) is used in the system to display 16 characters. Each line displays 8 characters. Each character is further divided into 5x7 pixels matrix format. 
+LCD contains tow registers namely command register and data register to send command to the LCD command register is used whereas to send data on the LCD screen to be displayed is saved 
+on data register.The intensity of the screen can also be controlled by using 10k pot connected to V0 pin of LCD.The LCD works on 4 bit mode as well as on 8 bit mode according to system 
+requirement.
+
+3.3.AURDUINO :
+Arduino is an open-source computer hardware and software company, project and user community that designs and manufactures kits for building digital devices and interactive objects that 
+can sense and control the physical world. It's based on an ATmega328P microcontroller, which is capable of processing and storing data.
+➢ The board has a variety of input and output pins, which can be used to connect to sensors, actuators, displays, and other components
+➢ The Arduino Uno comes with a USB interface that can be used to connect it to a computer and program it using the Arduino Integrated Development Environment (IDE).
+➢ The IDE provides a simple programming language that allows users to write code that can interact with the board's inputs and outputs.
+➢ Overall, the Arduino Uno is a versatile and beginner-friendly tool that enables people to create all sorts of cool electronic projects, from simple LED displays to complex robots
+and automation systems.
+
+3.4.POTENTIOMETER :
+The potentiometer is also an input device of Arduino that can be used for various purposes like controlling the brightness of LED or LCD by increasing or decreasing its resistance.
+In this write-up a potentiometer is interfaced with Arduino and its values are displayed on the LCD.
+
+3.5.LED :
+Led is used just to check the working of the set up. Each LED indicates flowing of messages inthe lcd.
+
+7.APPLICATION :
+➢ Proloquo2Go: 
+This is a symbol-supported communication app designed to help individuals who have difficulty speaking. It has a library of over 23,000 symbols and allows users to
+create custom phrases and sentences.
+➢ Speak for Yourself: 
+This app uses a grid of pictures to help individuals with speech impairments communicate. It has over 13,000 words and phrases and allows users to customize their vocabulary.
+➢ Predictable: 
+This is a communication aid that uses word prediction technology to help users with speech impairments communicate more efficiently. It also includes customizable layouts and a 
+range of voice options
+➢ Small Talk: 
+This app provides a library of pictures and phrases to help individuals with speech impairments engage in conversation. It covers a range of topics, including greetings,social 
+etiquette,and basic needs.
+
+8.SOURCE CODE :
+//Prateek
+//wwww.prateeks.in
+//https://www.youtube.com/c/JustDoElectronics/videos
+#include <LiquidCrystal.h>
+#define blue 6
+#define green 7
+#define red 8
+unsigned int f;
+void setup()
+{
+ lcd.init();
+ lcd.backlight();
+ lcd.setCursor(0, 0);
+ lcd.print("Sign Language to");
+ lcd.setCursor(0, 1);
+ lcd.print("Speech Convert");
+ delay(6000);
+ lcd.clear();
+ pinMode(blue, OUTPUT);
+ pinMode(green, OUTPUT);
+ pinMode(red, OUTPUT);
+ Serial.begin(9600);
+}
+void loop()
+{
+ f = analogRead(1);
+ Serial.println(f);
+ if (f > 320) //No Bend; Blue LED Glows
+ {
+ digitalWrite(blue, HIGH);
+ digitalWrite(green, LOW);
+ digitalWrite(red, LOW);
+ lcd.setCursor(0, 1);
+ lcd.print("Hi How are you");
+ delay(1000);
+ }
+ else if ((f < 320) && (f > 280)) //Small Bend; Green LED Glows
+ {
+ digitalWrite(green, HIGH);
+ digitalWrite(blue, LOW);
+ digitalWrite(red, LOW);
+ lcd.setCursor(0, 1);
+ lcd.print("NEED SOME HELP");
+ delay(1000);
+ }
+ else if ((f < 200) && (f > 100)) //Small Bend; Green LED Glows
+ {
+ digitalWrite(green, HIGH);
+ digitalWrite(blue, LOW);
+ digitalWrite(red, LOW);
+ lcd.setCursor(0, 1);
+ lcd.print("I am in emergency");
+ delay(1000);
+ }
+ else // Larger Bend; RED LED Glows
+ {
+ if (f > 100)
+ digitalWrite(red, HIGH);
+ digitalWrite(green, LOW);
+ digitalWrite(blue, LOW);
+ lcd.setCursor(0, 1);
+ lcd.print("No Sign Language");
+ }
+ delay(50);
+}
+
+
