@@ -1,0 +1,523 @@
+                                                           NEWS CATEGORY CLASSIFICATION USING LONG SHORT-TERM MEMORY
+
+ABSTRACT:
+         The exponential growth of online news articles necessitates efficient categorization for effective information retrieval and analysis. This project explores the application of 
+Long Short-Term Memory (LSTM) neural networks in classifying news articles into distinct categories.LSTMs, a type of recurrent neural network (RNN),are well-suited for sequential data 
+analysis due to their ability to capture temporal dependencies.The proposed model leverages preprocessed news text data and employs word embeddings to convert words into numerical 
+representations.These embeddings, along with their sequential arrangement,are fed into the LSTM architecture.The LSTM network's capability to retain contextual information over long 
+sequences enables it to capture the nuanced linguistic patterns within news articles.
+         The proposed model leverages preprocessed news text data and employs word embeddings to convert words into numerical representations.These embeddings, along with their 
+sequential arrangement, are fed into the LSTM architecture. The LSTM network's capability to retain contextual informationover long sequences enables it to capture the nuanced linguistic 
+patterns within news articles.
+         To evaluate the model's performance, a diverse dataset comprising news articles from various categories is employed. The dataset is split into training, validation, and testing 
+sets to facilitate model training, tuning, and evaluation. The LSTM's performance is compared against baseline models, such as traditional machine learning algorithms and standard deep 
+learning architectures.Experimental results demonstrate that the LSTM-based approach out performs baseline models in news category classification. The LSTM's inherent ability to model 
+temporal dependencies within news articles contributes to its improved accuracy in capturing subtle differences between categories. Additionally, the study investigates the impact of 
+hyper-parameter settings on model performance and explores techniques to mitigate over fitting.In conclusion,The utilization of sequential information encoded in the LSTM architecture 
+leads to enhanced classification accuracy compared to traditional methods. As the volume of news data continues to surge, the proposed LSTM-based approach offers a valuable tool for 
+efficient and accurate news categorization, thereby facilitating better information organization and retrieval.
+
+Description of the project:
+The primary goal of this project is to develop and implement a news categoryclassification system using Long Short-Term Memory (LSTM) neural networks, a specialized type of recurrent 
+neural network (RNN). The project aims toleverage the inherent sequential structure of news articles to achieve accurateand efficient categorization across various news topics. 
+
+The project workflow can be outlined as follows:
+
+Data Collection and Preprocessing:
+Acquiring a diverse dataset of news articles spanning multiple categories (e.g., politics, sports, entertainment, technology, etc.).Cleaning and preprocessingthe text data, which 
+involves tokenization, removing stop words, punctuation, and other noise, and converting words to lowercase.Assigning labels to eacharticle based on its corresponding category.
+
+Word Embedding:
+Converting the preprocessed text data into numerical representations usingword embeddings (e.g., Word2Vec, GloVe, FastText).Embeddings capturesemantic relationships between words, 
+enabling the model to understandwordmeanings and similarities. 
+
+LSTM Model Architecture:
+Designing the LSTM model architecture, which consists of multiple LSTMlayers followed by fully connected layers for classification.Configuring hyper-parameters such as the number of 
+LSTM units, dropout rates, andactivation functions.Using techniques like bidirectional LSTMs to capturecontext from both directions. 
+
+Training and Validation:
+Splitting the dataset into training, validation, and testing sets.Training theLSTM model on the training data, using the validation set for monitoringmodel
+performance during training.Employing optimization algorithms like AdamorRMSprop to update model parameters. 
+
+Evaluation:
+Evaluating the trained LSTM model on the testing dataset to assess its performance in classifying news articles.Measuring metrics such as accuracy, precision, recall, and F1-score to 
+quantify the model's classification performance.Comparing the LSTM-based model's performance against baseline models, such as traditional machine learning algorithms like NaiveBayes or 
+Support Vector Machines. 
+
+Hyper-parameter Tuning and Regularization:
+Fine-tuning hyper-parameters to optimize model performance on the validationset.Implementing techniques like dropout and L2 regularization to prevent over-fitting and improve 
+generalization. 
+
+Results Analysis and Interpretation:
+Analyzing the model's classification results to understand its strengths andweaknesses across different news categories.Identifying misclassified articlesand assessing whether specific 
+categories are more challenging for the model.
+
+Algorithm used to train the model
+
+LSTM - Long Short-Term Memory algorithm
+The algorithm used to train the LSTM model is called backpropagation throughtime (BPTT). 
+BPTT is a technique for training recurrent neural networks (RNNs) that allows the network to learn long-term dependencies in the data. BPTT works by breaking the input sequence into 
+smaller timesteps. Thenetwork is then trained to predict the output at the next timestep, given theinput at the current timestep and the previous hidden state. The error at the next 
+timestep is then backpropagated through the network to update theweights of the network. This process is repeated for all timesteps in the input sequence. Over time, thenetwork 
+learns to predict the output at the next timestep more accurately. The LSTM model is able to learn long-term dependencies in the data becauseof the use of gates. The gates control how 
+information flows into and out of thecell state. This allows the network to remember important information fromprevious timesteps, even if it is not immediately relevant to the current
+timestep. The training process for LSTM models can be computationally expensive, but the models can achieve state-of-the-art results on a variety of sequenceprediction tasks, including 
+news headline classification. 
+Here is a more detailed explanation of the BPTT algorithm for training anLSTM model:
+
+1. The input sequence is broken into smaller timesteps. 
+2. The network is initialized with random weights. 
+3. The network is trained to predict the output at the next timestep, giventhe input at the current timestep and the previous hidden state. 
+4. The error at the next timestep is backpropagated through the network toupdate the weights of the network. 
+5. Steps 3 and 4 are repeated for all timesteps in the input sequence. 
+6. The network is trained for a fixed number of epochs or until the error onthetraining set converges. 
+7. The network is evaluated on the test set. The BPTT algorithm is a powerful technique for training LSTMmodels. However, it can be computationally expensive for large input sequences. 
+There are a number of techniques that can be used to speed up the trainingprocess, such as using a smaller learning rate or using a truncated BPTTalgorithm.
+
+
+
+# **News Category Classification using LSTM**
+#**News categories included in this dataset include business; science and technology; entertainment; and health.**
+
+#**Different news articles that refer to the same news item (e.g., several articles about recently released employment statistics) are also categorized together.**
+     
+
+#importing libraries
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import re
+from tensorflow import keras
+from nltk.stem.porter import PorterStemmer
+from nltk.corpus import stopwords
+from tensorflow.keras.preprocessing.text import one_hot
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.layers import Embedding,LSTM,Dense,Dropout
+from tensorflow.keras.models import Sequential
+from keras.utils.np_utils import to_categorical
+     
+
+from google.colab import drive
+drive.mount('/content/drive')
+     
+Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount("/content/drive", force_remount=True).
+
+import pandas as pd
+path="/content/drive/MyDrive/Colab Notebooks/uci-news-aggregator.csv"
+dir=pd.read_csv(path)
+dir.describe
+     
+<bound method NDFrame.describe of             ID                                              TITLE  \
+0            1  Fed official says weak data caused by weather,...   
+1            2  Fed's Charles Plosser sees high bar for change...   
+2            3  US open: Stocks fall after Fed official hints ...   
+3            4  Fed risks falling 'behind the curve', Charles ...   
+4            5  Fed's Plosser: Nasty Weather Has Curbed Job Gr...   
+...        ...                                                ...   
+422414  422933  Surgeons to remove 4-year-old's rib to rebuild...   
+422415  422934  Boy to have surgery on esophagus after battery...   
+422416  422935  Child who swallowed battery to have reconstruc...   
+422417  422936  Phoenix boy undergoes surgery to repair throat...   
+422418  422937  Phoenix boy undergoes surgery to repair throat...   
+
+                                                      URL          PUBLISHER  \
+0       http://www.latimes.com/business/money/la-fi-mo...  Los Angeles Times   
+1       http://www.livemint.com/Politics/H2EvwJSK2VE6O...           Livemint   
+2       http://www.ifamagazine.com/news/us-open-stocks...       IFA Magazine   
+3       http://www.ifamagazine.com/news/fed-risks-fall...       IFA Magazine   
+4       http://www.moneynews.com/Economy/federal-reser...          Moneynews   
+...                                                   ...                ...   
+422414  http://www.cbs3springfield.com/story/26378648/...            WSHM-TV   
+422415  http://www.wlwt.com/news/boy-to-have-surgery-o...    WLWT Cincinnati   
+422416  http://www.newsnet5.com/news/local-news/child-...       NewsNet5.com   
+422417  http://www.wfsb.com/story/26368078/phoenix-boy...               WFSB   
+422418  http://www.cbs3springfield.com/story/26368078/...            WSHM-TV   
+
+       CATEGORY                          STORY                 HOSTNAME  \
+0             b  ddUyU0VZz0BRneMioxUPQVP6sIxvM          www.latimes.com   
+1             b  ddUyU0VZz0BRneMioxUPQVP6sIxvM         www.livemint.com   
+2             b  ddUyU0VZz0BRneMioxUPQVP6sIxvM      www.ifamagazine.com   
+3             b  ddUyU0VZz0BRneMioxUPQVP6sIxvM      www.ifamagazine.com   
+4             b  ddUyU0VZz0BRneMioxUPQVP6sIxvM        www.moneynews.com   
+...         ...                            ...                      ...   
+422414        m  dpcLMoJD69UYMXMxaoEFnWql9YjQM  www.cbs3springfield.com   
+422415        m  dpcLMoJD69UYMXMxaoEFnWql9YjQM             www.wlwt.com   
+422416        m  dpcLMoJD69UYMXMxaoEFnWql9YjQM         www.newsnet5.com   
+422417        m  dpcLMoJD69UYMXMxaoEFnWql9YjQM             www.wfsb.com   
+422418        m  dpcLMoJD69UYMXMxaoEFnWql9YjQM  www.cbs3springfield.com   
+
+            TIMESTAMP  
+0       1394470370698  
+1       1394470371207  
+2       1394470371550  
+3       1394470371793  
+4       1394470372027  
+...               ...  
+422414  1409229190251  
+422415  1409229190508  
+422416  1409229190771  
+422417  1409229191071  
+422418  1409229191565  
+
+[422419 rows x 8 columns]>
+
+#importing the dataset
+#dir = pd.read_csv('../input/news-aggregator-dataset/uci-news-aggregator.csv')
+#pd.set_option('display.max_columns', None)
+#dir.head()
+     
+
+#**WE HAVE ONLY TWO FEATURES OF USE**
+
+#1. **TITLE**
+#2. **CATEGORY**
+     
+
+#creating a new dataset with only relevant features.
+ds = dir[['TITLE','CATEGORY']]
+#ds=ds.sample(n=42418)
+ds.head()
+ds.describe
+     
+<bound method NDFrame.describe of                                                     TITLE CATEGORY
+0       Fed official says weak data caused by weather,...        b
+1       Fed's Charles Plosser sees high bar for change...        b
+2       US open: Stocks fall after Fed official hints ...        b
+3       Fed risks falling 'behind the curve', Charles ...        b
+4       Fed's Plosser: Nasty Weather Has Curbed Job Gr...        b
+...                                                   ...      ...
+422414  Surgeons to remove 4-year-old's rib to rebuild...        m
+422415  Boy to have surgery on esophagus after battery...        m
+422416  Child who swallowed battery to have reconstruc...        m
+422417  Phoenix boy undergoes surgery to repair throat...        m
+422418  Phoenix boy undergoes surgery to repair throat...        m
+
+[422419 rows x 2 columns]>
+
+#**HERE YOU CAN SEE THAT ALL CATEGORIES ARE IN ORDER(ALL B's TOGETHER AND SO ON), THEREFORE SHUFFLING THEM FOR OUR CONVENIENCE**
+
+     
+
+#shuffling rows with the help of sample, here (frac = 1) means return all rows
+ds = ds.sample(frac=1).reset_index(drop=True)
+ds.head()
+     
+TITLE	CATEGORY
+0	Qualcomm slapped with bribery allegations by US	b
+1	You are here! Home > SCIENCE and TECHNOLOGY > ...	m
+2	More Apps Arrive on Chromecast	t
+3	ACA cost cutting means Medicare won't go broke...	m
+4	New VR Adventure Game at E3: nDreams Announced	t
+
+#**DATASET IS NOW SHUFFLED**
+     
+
+#checking for null values
+ds.isnull().sum()
+     
+TITLE       0
+CATEGORY    0
+dtype: int64
+
+
+#**NO NULL VALUES FOUND**
+     
+
+#plotting graph for categories
+sns.countplot(x = 'CATEGORY',data = ds)
+     
+<Axes: xlabel='CATEGORY', ylabel='count'>
+
+
+'''**THERE ARE FOUR TYPES OF CATEGORIES-**
+1. **b : business (~115000)**
+2. **t : science and technology (~110000)**
+3. **e : entertainment (~150000)**
+4. **m : health (~40000)**'''
+
+     
+'**THERE ARE FOUR TYPES OF CATEGORIES-**\n1. **b : business (~115000)**\n2. **t : science and technology (~110000)**\n3. **e : entertainment (~150000)**\n4. **m : health (~40000)**'
+
+#**NOW MOVING ONTO CLEANING AND PREPROCESSING OF THE TEXT DATA**
+#importing libraries
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import re
+from tensorflow import keras
+import os
+
+import nltk
+nltk.download('stopwords')
+from nltk.stem.porter import PorterStemmer
+from nltk.corpus import stopwords
+from tensorflow.keras.preprocessing.text import one_hot
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.layers import Embedding,LSTM,Dense,Dropout
+from tensorflow.keras.models import Sequential
+from keras.utils.np_utils import to_categorical
+     
+[nltk_data] Downloading package stopwords to /root/nltk_data...
+[nltk_data]   Unzipping corpora/stopwords.zip.
+
+#cleaning and preprocessing the text
+
+cleaned = []
+for i in range(0,len(ds)):
+
+    #removing any other words than (a-z) and (A-Z)
+    msg = re.sub('[^a-zA-Z]',' ',ds['TITLE'][i])
+
+    #converting all texts to lower case
+    msg = msg.lower()
+
+    #tokenizing
+    msg = msg.split()
+
+    #stemming and removing stopwords
+    ps = PorterStemmer()
+    msg = [ps.stem(words) for words in msg if not words in set(stopwords.words('english'))]
+    msg = ' '.join(msg)
+    cleaned.append(msg)
+     
+
+#cleaned data with no punctuations,stopwords and all texts in lowercase.
+cleaned[:5]
+     
+['qualcomm slap briberi alleg us',
+ 'home scienc technolog tire home come',
+ 'app arriv chromecast',
+ 'aca cost cut mean medicar go broke till',
+ 'new vr adventur game e ndream announc']
+
+#taking dictionary size 5000
+dict_size = 5000
+
+#one hot encoding
+one_hot_mat = [one_hot(words,dict_size) for words in cleaned]
+
+#now for input as an embedding layer length of all rows should be equal therefore applying padding
+#this will make size of all rows equal by adding 0 at starting of the shorter rows
+#size of each row will be equal to length of longest row.
+embedded_layer = pad_sequences(one_hot_mat,padding = 'pre',maxlen = 150)
+embedded_layer
+     
+array([[   0,    0,    0, ..., 2142, 1092, 1246],
+       [   0,    0,    0, ..., 1566, 2163, 1977],
+       [   0,    0,    0, ..., 2086, 4365, 4309],
+       ...,
+       [   0,    0,    0, ..., 3996,  201, 3628],
+       [   0,    0,    0, ...,  371, 1977, 3605],
+       [   0,    0,    0, ..., 2726,  942,  909]], dtype=int32)
+
+#now creating independent and dependent features
+x = embedded_layer
+y = np.array(ds['CATEGORY'])
+     
+
+#converting categorical values of y using OneHotEncoding
+le = LabelEncoder()
+y = le.fit_transform(y)
+y = to_categorical(y,4)
+     
+
+y[:10]
+     
+array([[1., 0., 0., 0.],
+       [0., 0., 1., 0.],
+       [0., 0., 0., 1.],
+       [0., 0., 1., 0.],
+       [0., 0., 0., 1.],
+       [0., 0., 1., 0.],
+       [1., 0., 0., 0.],
+       [0., 1., 0., 0.],
+       [0., 1., 0., 0.],
+       [0., 0., 0., 1.]], dtype=float32)
+
+#splitting the Dataset into Train and Test set
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=42)
+print(x_train.shape,y_train.shape)
+print(x_test.shape,y_test.shape)
+     
+(337935, 150) (337935, 4)
+(84484, 150) (84484, 4)
+
+#creating model using LSTM
+model = Sequential()
+
+#taking number features as 50
+model.add(Embedding(dict_size,50,input_length = len(x[0])))
+model.add(Dropout(0.2))
+
+#adding LSTM layers with 100 neurons
+model.add(LSTM(100))
+
+#adding output layer
+model.add(Dense(4,activation="softmax"))
+
+#compiling the model
+model.compile(loss="categorical_crossentropy",optimizer='adam',metrics=["accuracy"])
+
+#summary of model
+model.summary()
+
+#training the model
+rnn = model.fit(x_train, y_train, validation_data = (x_test,y_test), epochs = 10, batch_size = 256)
+     
+Model: "sequential"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ embedding (Embedding)       (None, 150, 50)           250000    
+                                                                 
+ dropout (Dropout)           (None, 150, 50)           0         
+                                                                 
+ lstm (LSTM)                 (None, 100)               60400     
+                                                                 
+ dense (Dense)               (None, 4)                 404       
+                                                                 
+=================================================================
+Total params: 310,804
+Trainable params: 310,804
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/10
+1321/1321 [==============================] - 916s 691ms/step - loss: 0.3846 - accuracy: 0.8578 - val_loss: 0.2846 - val_accuracy: 0.8993
+Epoch 2/10
+1321/1321 [==============================] - 891s 674ms/step - loss: 0.2764 - accuracy: 0.9022 - val_loss: 0.2709 - val_accuracy: 0.9050
+Epoch 3/10
+1321/1321 [==============================] - 936s 709ms/step - loss: 0.2559 - accuracy: 0.9090 - val_loss: 0.2580 - val_accuracy: 0.9093
+Epoch 4/10
+1321/1321 [==============================] - 921s 697ms/step - loss: 0.2377 - accuracy: 0.9150 - val_loss: 0.2483 - val_accuracy: 0.9125
+Epoch 5/10
+1321/1321 [==============================] - 904s 685ms/step - loss: 0.2236 - accuracy: 0.9197 - val_loss: 0.2445 - val_accuracy: 0.9148
+Epoch 6/10
+1321/1321 [==============================] - 907s 687ms/step - loss: 0.2124 - accuracy: 0.9236 - val_loss: 0.2418 - val_accuracy: 0.9162
+Epoch 7/10
+1321/1321 [==============================] - 876s 663ms/step - loss: 0.2013 - accuracy: 0.9275 - val_loss: 0.2395 - val_accuracy: 0.9178
+Epoch 8/10
+1321/1321 [==============================] - 901s 682ms/step - loss: 0.1918 - accuracy: 0.9312 - val_loss: 0.2365 - val_accuracy: 0.9194
+Epoch 9/10
+1321/1321 [==============================] - 894s 676ms/step - loss: 0.1836 - accuracy: 0.9337 - val_loss: 0.2347 - val_accuracy: 0.9205
+Epoch 10/10
+1321/1321 [==============================] - 889s 673ms/step - loss: 0.1757 - accuracy: 0.9368 - val_loss: 0.2370 - val_accuracy: 0.9214
+
+#evaluating our model
+model.evaluate(x_test,y_test)
+     
+2641/2641 [==============================] - 102s 39ms/step - loss: 0.2370 - accuracy: 0.9214
+[0.23700155317783356, 0.9214407205581665]
+
+
+     
+
+#making predictions
+pred = model.predict(x_test)
+
+#saving index of maximum value of pred in preds (because in pred probabilities will come)
+preds = []
+for i in range(0,len(pred)):
+    preds.append(pred[i].argmax())
+
+#saving index of maximum value of y_test in actual
+actual = []
+for i in range(0,len(y_test)):
+    actual.append(y_test[i].argmax())
+
+     
+2641/2641 [==============================] - 104s 39ms/step
+
+#classification report
+from sklearn import metrics
+report = metrics.classification_report(actual, preds, target_names = ['b','t','e','m'])
+print(report)
+     
+              precision    recall  f1-score   support
+
+           b       0.91      0.90      0.90     23238
+           t       0.95      0.96      0.95     30640
+           e       0.90      0.90      0.90      9110
+           m       0.91      0.90      0.91     21496
+
+    accuracy                           0.92     84484
+   macro avg       0.91      0.91      0.91     84484
+weighted avg       0.92      0.92      0.92     84484
+
+
+#checking category of a text
+#txt = ["US doctor claims ADHD does not exist"]                                          # health
+#txt=["Boston's longest-serving mayor has been diagnosed with cancer"]                   # health
+#txt=["Keller @ Large: Menino Upbeat And Determined To Beat Cancer"]                     # health
+#txt= ["Five things you need to know today, and is this the best Amazon.com sale ever?"] # business
+#txt= ["No chance of EU-US trade deal in 2014"]                                          # business
+#txt=["Carl Icahn: Donahoe Cost eBay Investors More Than $4B"]                           # business
+#txt=["In Hollywood's Bible epic revival, Darren Aronofsky's 'Noah' finds rough seas"]   # entertainment
+#txt=["Rick Ross' 'Mastermind' outfoxes Pharrell Williams' 'GIRL' on Billboard 200"]     # entertainment
+#txt=["On the Charts: Pharrell, Rick Ross Post Big Opening Weeks"]                       # entertainment
+#txt=["Google has plans to support wearable technology"]                                 # science
+#txt=["Google Glass Price: Will Consumer Wishes Dictate The Cost Of The Device  ..."]    # science
+txt=["It's looking less likely that Apple will develop an iTelevision"]                 # science
+
+#cleaning and preprocessing the text
+cleaned = []
+for i in range(0,len(txt)):
+    msg = re.sub('[^a-zA-Z]',' ',txt[i])
+    msg = msg.lower()
+    msg = msg.split()
+    ps = PorterStemmer()
+    msg = [ps.stem(words) for words in msg if not words in set(stopwords.words('english'))]
+    msg = ' '.join(msg)
+    cleaned.append(msg)
+
+#one hot encoding and embedding layer
+one_hot_mat = [one_hot(words,dict_size) for words in cleaned]
+embedded_layer = pad_sequences(one_hot_mat,padding = 'pre',maxlen = 150)
+embedded_layer
+
+#prediction
+pred = model.predict(embedded_layer)
+#cat = ['Business','Science','Entertainment','Health']
+cat = ['Business','Entertainment','Health','Science']
+f=cat[np.argmax(pred)]
+print(pred, cat[np.argmax(pred)])
+
+
+     
+1/1 [==============================] - 0s 57ms/step
+[[0.03052416 0.03282339 0.0107102  0.92594224]] Science
+
+print(f)
+
+if cat[np.argmax(pred)]== 'Entertainment':
+  c='e'
+elif cat[np.argmax(pred)]== 'Science':
+  c='t'
+elif cat[np.argmax(pred)]== 'Health':
+  c='m'
+else:
+  c='b'
+
+ds_new=ds[ds['CATEGORY']==c]
+print(ds_new)
+     
+Science
+                                                    TITLE CATEGORY
+2                          More Apps Arrive on Chromecast        t
+4          New VR Adventure Game at E3: nDreams Announced        t
+9                       3.3 Million More GM Cars Recalled        t
+20                          Gas prices rise about 2 cents        t
+28               Tablet Shipments To Overtake PCs In 2015        t
+...                                                   ...      ...
+422402  Tweetdeck has an XSS flaw. Here's what you sho...        t
+422403  Sense 6.0 Coming To HTC One In May-June, Accor...        t
+422406  Google I/O: APIs and Cloud Platform Tools for ...        t
+422415  DirecTV's new Sunday Ticket streaming service ...        t
+422418  US Regions With Highest Air Pollution Are in C...        t
+
+[108344 rows x 2 columns]
+
+
